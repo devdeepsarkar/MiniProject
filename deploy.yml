@@ -1,31 +1,19 @@
 ---
-- name: Pull Docker Image from Docker Hub
+- name: Deploy Docker Container Locally
   hosts: localhost
-  remote_user: raju
+  connection: local
   become: false
+
   tasks:
+
     - name: Pull Docker Image
-      docker_image:
-        name: "iiitb/calculator"
-        source: pull
-      register: docker_pull_result
+      shell: docker pull devdeepsarkar/calculator:latest
 
-    - name: Display Docker Pull Result
-      debug:
-        var: docker_pull_result
-        
-    - name: Start Docker service
-      service:
-        name: docker
-        state: started
-        
-    - name: stop container
-      shell: docker stop calculator
-      
-    - name: rm container
-      shell: docker rm calculator
-     
-    - name: Running container
-      shell: docker run -it -d --name calculator iiitb/calculator /bin/bash
+    - name: Stop existing container (ignore if not running)
+      shell: docker stop calculator || true
 
+    - name: Remove existing container (ignore if not present)
+      shell: docker rm calculator || true
 
+    - name: Run container
+      shell: docker run -d --name calculator devdeepsarkar/calculator:latest
