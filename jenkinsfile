@@ -5,7 +5,7 @@ pipeline {
    }
     environment {
         DOCKER_IMAGE_NAME = 'calculator'
-        GITHUB_REPO_URL = 'https://github.com/BThangaraju/MiniProject.git'
+        GITHUB_REPO_URL = 'https://github.com/devdeepsarkar/MiniProject.git'
     }
 
     stages {
@@ -27,28 +27,31 @@ pipeline {
             }
         }
 
-        stage('Push Docker Images') {
+        stage('Push Docker Image') {
             steps {
-                script{
-                    docker.withRegistry('', 'DockerHubCred') {
-                    sh 'docker tag calculator iiitb/calculator:latest'
-                    sh 'docker push iiitb/calculator'
-                    }
-                 }
-            }
-        }
-
-   stage('Run Ansible Playbook') {
-            steps {
-                script {
-                    ansiblePlaybook(
-                        playbook: 'deploy.yml',
-                        inventory: 'inventory'
-                     )
+                withCredentials([usernamePassword(
+                    credentialsId: 'DockerHubCred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo $DOCKER_PASS | /usr/local/bin/docker login -u $DOCKER_USER --password-stdin
+                        /usr/local/bin/docker tag calculator devdeepsarkar/calculator:latest
+                        /usr/local/bin/docker push devdeepsarkar/calculator:latest
+                    '''
                 }
             }
         }
 
+   stage('Run Ansible Playbook') {
+        steps {
+            sh '/opt/homebrew/bin/ansible-playbook deploy.yml -i inventory'
+        }
+    }
+    stage('Test Container') {
+        steps {
+            sh 'docker run --rm devdeepsarkar/calculator 5 3 1'
+        }
+    }
     }
 }
-
