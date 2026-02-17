@@ -1,2 +1,17 @@
-This is just test message. 
-This is just test message. 
+docker run --rm devdeepsarkar/calculator 5 3 1
+Addition Result: 8
+
+devdeepsarkar@Devdeeps-MacBook-Air ~ % docker run devdeepsarkar/calculator 5 3 1 
+Addition Result: 8
+
+devdeepsarkar@Devdeeps-MacBook-Air ~ % docker run devdeepsarkar/calculator 7 6 2
+Subtraction Result: 1
+
+devdeepsarkar@Devdeeps-MacBook-Air ~ % docker run devdeepsarkar/calculator 7 6 3
+Multiplication Result: 42
+
+devdeepsarkar@Devdeeps-MacBook-Air ~ % docker run devdeepsarkar/calculator 7 6 4
+Division Result: 1
+
+devdeepsarkar@Devdeeps-MacBook-Air ~ % docker run devdeepsarkar/calculator 7 6 5
+Invalid operation. Choose 1, 2, 3, or 4.
